@@ -54,31 +54,48 @@
 --|    s_<signal name>          = state name
 --|
 --+----------------------------------------------------------------------------
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+library ieee;
+  use ieee.std_logic_1164.all;
+  use ieee.numeric_std.all;
 
-entity top is
-    Port (
-        sw  : in  STD_LOGIC_VECTOR(15 downto 0);
-        seg : out STD_LOGIC_VECTOR(6 downto 0);
-        an  : out STD_LOGIC_VECTOR(3 downto 0)
-    );
-end top;
 
-architecture Behavioral of top is
+entity top_basys3 is
+	port(
+		-- 7-segment display segments (cathodes CG ... CA)
+		seg		:	out std_logic_vector(6 downto 0);  -- seg(6) = CG, seg(0) = CA
 
-    -- Component declaration
-    component sevenseg_decoder
+		-- 7-segment display active-low enables (anodes)
+		an      :	out std_logic_vector(3 downto 0);
+
+		-- Switches
+		sw		:	in  std_logic_vector(3 downto 0);
+		
+		-- Buttons
+		btnC	:	in	std_logic
+
+	);
+end top_basys3;
+
+architecture top_basys3_arch of top_basys3 is 
+	
+  -- declare the component of your top-level design
+
+component sevenseg_decoder
         Port (
             i_Hex   : in  STD_LOGIC_VECTOR(3 downto 0);
             o_seg_n : out STD_LOGIC_VECTOR(6 downto 0)
         );
     end component;
 
-begin
+  -- create wire to connect button to 7SD enable (active-low)
 
-    -- Instantiate the decoder
-    uut: sevenseg_decoder
+  
+begin
+	-- PORT MAPS ----------------------------------------
+
+	--	Port map: wire your component up to the switches and seven-segment display cathodes
+	-----------------------------------------------------	
+	uut: sevenseg_decoder
         port map (
             i_Hex   => sw(3 downto 0),  -- lower 4 switches
             o_seg_n => seg
@@ -87,4 +104,12 @@ begin
     -- Enable only first digit (active LOW)
     an <= "1110";
 
-end Behavioral;
+	
+	-- CONCURRENT STATEMENTS ----------------------------
+	
+	-- wire up active-low 7SD anode (active low) to button (active-high)
+	-- display 7SD 0 only when button pushed
+	-- other 7SD are kept off
+	-----------------------------------------------------
+	
+end top_basys3_arch;
