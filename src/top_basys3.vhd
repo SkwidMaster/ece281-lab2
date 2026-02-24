@@ -88,7 +88,7 @@ component sevenseg_decoder
     end component;
 
   -- create wire to connect button to 7SD enable (active-low)
-
+    signal w_7SD_EN_n : std_logic ;
   
 begin
 	-- PORT MAPS ----------------------------------------
@@ -102,7 +102,8 @@ begin
         );
 
     -- Enable only first digit (active LOW)
-    an <= "1110";
+    w_7SD_EN_n <= not btnC;
+    an <= (0 => w_7SD_EN_n, others => '1');
 
 	
 	-- CONCURRENT STATEMENTS ----------------------------
